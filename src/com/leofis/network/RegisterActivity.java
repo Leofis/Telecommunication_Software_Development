@@ -14,6 +14,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -50,6 +52,33 @@ public class RegisterActivity extends Activity {
 
         loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         loginEditor = loginPreferences.edit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        menu.getItem(1).setVisible(false);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void addComputer(View view) {
@@ -239,6 +268,7 @@ public class RegisterActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(String... params) {
+            publishProgress();
             WebServiceAction webservice = new WebServiceAction();
             boolean result = webservice.registerAndroid(username, password, computers);
             return result;

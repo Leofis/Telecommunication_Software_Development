@@ -18,8 +18,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
@@ -44,11 +43,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     // Declaring our tabs and the corresponding fragments.
     ActionBar.Tab maliciousTab, statisticalTab, interfaceTab, deleteTab;
 
-    //This is for expandable view frame
-//    private ExpandableListAdapter exListAdapter;
-//    private List<String> listComputerTitles;
-//    private HashMap<String, List<String>> listComputerInterfaces;
-
     private ViewPager viewPager;
     private TabAdapter tabAdapter;
     private ActionBar actionBar;
@@ -58,14 +52,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     private String password;
 
     private final String ADMIN_USERNAME = "admin"; /* must be replaced with property file */
-
-    //Fragment maliFragmentTab = new MaliciousTab();
-    //Fragment statFragmentTab = new StatisticalTab();
-    //Fragment interFragmentTab = new InterfaceTab();
-    //Fragment delFragmentTab = new DeleteTab();
-
-    // private Button register , unregister ;
-    // private EditText delEditText ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +79,12 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         // Asking for the default ActionBar element that our platform supports.
         actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(false);
+
         // Screen handling while hiding ActionBar icon.
         actionBar.setDisplayShowHomeEnabled(false);
 
         // Screen handling while hiding Actionbar title.
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
 
         // Creating ActionBar tabs.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -149,6 +136,32 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_settings) {
+            return true;
+        }
+        if (id == R.id.menu_logout) {
+            logout(getCurrentFocus());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -519,9 +532,9 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listComputerTitles.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        listComputerTitles.get(groupPosition) + " Expanded",
+//                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -530,9 +543,9 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listComputerTitles.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        listComputerTitles.get(groupPosition) + " Collapsed",
+//                        Toast.LENGTH_SHORT).show();
 
             }
         });
