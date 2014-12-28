@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Register Form"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal"/>
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="27dp"
+            android:layout_gravity="center_horizontal"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="Username"
+            android:ems="10"
+            android:textColorHint="@android:color/darker_gray"
+            android:id="@+id/register_username_text"
+            android:layout_gravity="center_horizontal"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="Password"
+            android:ems="10"
+            android:textColorHint="@android:color/darker_gray"
+            android:id="@+id/register_pass_text"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="Confirm Password"
+            android:ems="10"
+            android:id="@+id/register_passConfirm_text"
+            android:textColorHint="@android:color/darker_gray"
+            android:layout_gravity="center_horizontal"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1">
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/computer_ID_text"
+                android:hint="Computer ID"
+                android:textColorHint="@android:color/darker_gray"
+                android:layout_weight="1"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Computer"
+                android:id="@+id/computer_ID_button"
+                android:onClick="addComputer"/>
+    </LinearLayout>
+    <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:id="@+id/computer_list"
+            android:layout_gravity="start"
+            tools:listitem="@android:layout/simple_list_item_1"
+            android:choiceMode="multipleChoice"/>
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:id="@+id/button_complete_register"
+            android:onClick="registerUser"
+            android:layout_gravity="right"/>
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Network Management</string>
+    <string name="admin_username">admin</string>
+    <string name="greetings">Management Application</string>
+    <string name="genericID">Computer ID</string>
+    <string name="register_title">Register or Delete PC</string>
+    <string name="answer_yes_button">Register</string>
+    <string name="answer_no_button">Delete</string>
+    <string name="hint_yes_button"></string>
+    <string name="hint_no_button"></string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="Login_button">Login</string>
+    <string name="empty_username_password">Please fill the username and the password</string>
+    <string name="login_message">Welcome User</string>
+    <string name="remember_user_pass">Remember me</string>
+    <string name="malicious_tab_title">Malicious Tab Screen</string>
+</resources>

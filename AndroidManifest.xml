@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.leofis.network"
+          android:versionCode="1"
+          android:versionName="1.1">
+    <uses-sdk android:minSdkVersion="19"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application android:label="@string/app_name"
+                 android:icon="@drawable/ic_launcher">
+
+        <activity android:name=".DashboardActivity"
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".UserActivity"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="com.leofis.network.UserActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".LoginActivity"
+                  android:label="Login Window"
+                  android:noHistory="true">
+            <intent-filter>
+                <action android:name="com.leofis.network.LoginActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".HomeActivity"/>
+
+        <activity android:name=".RegisterActivity"
+                  android:label="Welcome &amp; Register">
+            <intent-filter>
+                <action android:name="com.leofis.network.RegisterActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name=".service.SilentHunter"/>
+    </application>
+
+</manifest>

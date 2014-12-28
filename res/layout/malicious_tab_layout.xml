@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/malicious_tab_title"
+            android:id="@+id/textView"
+            android:textSize="30sp"
+            android:layout_gravity="center"/>
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="center_horizontal"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add IP"
+                android:id="@+id/add_ip_button"
+                android:onClick="addMalicious"
+                android:layout_weight="2" android:clickable="true"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:hint="Enter IP here"
+                android:id="@+id/add_ip_textfield"
+                android:onClick="addMalicious"
+                android:textColorHint="@android:color/darker_gray"
+                android:layout_weight="1" android:inputType="number|text" android:maxLines="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Pattern"
+                android:onClick="addMaliciousPa"
+                android:id="@+id/add_pattern_button"
+                android:layout_weight="2" android:clickable="true"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:hint="Enter Pattern here"
+                android:id="@+id/add_pattern_textfield"
+                android:layout_weight="1"
+                android:textColorHint="@android:color/darker_gray" android:maxLines="1" android:longClickable="false"/>
+    </LinearLayout>
+    <Space android:layout_width="match_parent"
+           android:layout_height="70dp"
+           android:layout_gravity="center_horizontal"
+           android:id="@+id/space"/>
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Show all malicious"
+            android:id="@+id/showAllMalicious_button"
+            android:onClick="showAllMalicious"
+            android:layout_gravity="center_horizontal"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/ip_listView"
+                tools:listitem="@android:layout/simple_list_item_1"
+                android:choiceMode="singleChoice"/>
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/pattern_listView"
+                tools:listitem="@android:layout/simple_list_item_1"
+                android:choiceMode="singleChoice"/>
+    </LinearLayout>
+</LinearLayout>

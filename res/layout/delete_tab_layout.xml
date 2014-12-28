@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="25sp"
+            android:textIsSelectable="true"
+            android:layout_gravity="center"/>
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <Button
+                android:layout_width="180dp"
+                android:layout_height="match_parent"
+                android:text="@string/answer_yes_button"
+                android:id="@+id/register_button"
+                android:onClick="registerComputer"
+                />
+        <Button
+                android:layout_width="180dp"
+                android:layout_height="match_parent"
+                android:text="@string/answer_no_button"
+                android:id="@+id/unregister_button"
+                android:onClick="unregisterComputer"
+                />
+    </LinearLayout>
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <EditText
+                android:layout_width="360dp"
+                android:layout_height="54dp"
+                android:id="@+id/genericID_textfield"
+                android:inputType="text"
+                android:hint="@string/genericID"
+                android:textColorHint="@android:color/darker_gray"/>
+    </LinearLayout>
+</LinearLayout>
