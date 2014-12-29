@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -75,6 +76,7 @@ public class LoginActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_settings) {
+            setURL();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -95,18 +97,22 @@ public class LoginActivity extends Activity {
 //        }
 //    }
 
-    private void checkSaveOption(String username, String password) {
-        if (rememberMe.isChecked()) saveCredentials(username, password);
+    private void checkSaveOption(String username, String password,int status) {
+        if (rememberMe.isChecked()) saveCredentials(username, password,status);
         else {
-            loginEditor.clear();
+            loginEditor.remove("Username_Key");
+            loginEditor.remove("Password_Key");
+            loginEditor.remove("isLoggedIn");
+            loginEditor.remove("User_Type");
             loginEditor.commit();
         }
     }
 
-    private void saveCredentials(String username, String password) {
+    private void saveCredentials(String username, String password,int status) {
         loginEditor.putString("Username_Key", username);
         loginEditor.putString("Password_Key", password);
         loginEditor.putString("isLoggedIn", "yes");
+        loginEditor.putInt("User_Type",status);
         loginEditor.commit();
     }
 
@@ -164,7 +170,7 @@ public class LoginActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle("Wrong Credentials")
                 .setMessage("Do you want to continue with a fresh Registration ?")
-                .setPositiveButton("Let's Roll!", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes, sure", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
@@ -172,7 +178,7 @@ public class LoginActivity extends Activity {
                     }
                 })
                 /*android.R.string.no*/
-                .setNegativeButton("Bah..", new DialogInterface.OnClickListener() {
+                .setNegativeButton("No, thanks.", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // do nothing
                     }
@@ -181,7 +187,27 @@ public class LoginActivity extends Activity {
                 .show();
     }
 
-    protected class AsyncTaskLogin extends AsyncTask<String, Integer, Boolean> {
+    private void setURL()
+    {
+        final EditText txtUrl = new EditText(this);
+        txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Web Services Initialization")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods.")
+                .setView(txtUrl)
+                .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String url = txtUrl.getText().toString();
+                        if(url.isEmpty()) return;
+                        loginEditor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
+                        loginEditor.commit();
+                    }
+                })
+                .show();
+    }
+
+    protected class AsyncTaskLogin extends AsyncTask<String, Integer, Integer> {
 
         ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
         private String username;
@@ -198,10 +224,11 @@ public class LoginActivity extends Activity {
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected Integer doInBackground(String... params) {
             publishProgress();
-            WebServiceAction webservice = new WebServiceAction();
-            boolean result = webservice.login(username, password);
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
+            int result = webservice.login(username, password);
+            System.out.println(result);
             return result;
         }
 
@@ -215,15 +242,16 @@ public class LoginActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(Boolean login_successful) {
+        protected void onPostExecute(Integer login_successful) {
             super.onPostExecute(login_successful);
 
-            if (login_successful) {
+            if (login_successful == 1 || login_successful == 2) {
                 dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(), UserActivity.class);
-                checkSaveOption(username, password);
+                checkSaveOption(username, password,login_successful);
                 intent.putExtra("Username_Key", username);
                 intent.putExtra("Password_Key", password);
+                intent.putExtra("User_Type", login_successful);
                 startActivity(intent);
             } else {
                 dialog.dismiss();

@@ -10,13 +10,13 @@ import android.util.Log;
 
 public class DatabaseAdapter {
 
-    public static final String KEY_GENERIC_ID = "GenericID";
-    public static final String KEY_INTERFACE_NAME = "InterfaceName";
-    public static final String KEY_INTERFACE_IP = "InterfaceIP";
-    public static final String KEY_MALICIOUS_PATTERN = "MaliciousPattern";
-    public static final String KEY_MALICIOUS_IP = "MaliciousIP";
-    public static final String COUNT = "Count";
-    public static final String STATE = "State";
+    public final String KEY_GENERIC_ID = "GenericID";
+    public final String KEY_INTERFACE_NAME = "InterfaceName";
+    public final String KEY_INTERFACE_IP = "InterfaceIP";
+    public final String KEY_MALICIOUS_PATTERN = "MaliciousPattern";
+    public final String KEY_MALICIOUS_IP = "MaliciousIP";
+    public final String COUNT = "Count";
+    public final String STATE = "State";
     private static final String TAG = "DBAdapter";
 
     private static final String DATABASE_NAME = "Nsa_Android";

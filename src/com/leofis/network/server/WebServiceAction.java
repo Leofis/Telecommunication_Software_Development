@@ -1,5 +1,8 @@
 package com.leofis.network.server;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
@@ -15,7 +18,17 @@ import java.util.Vector;
 public class WebServiceAction {
 
     private final String NAMESPACE = "http://server/";
-    private final String URL = "http://192.168.1.12:9999/LeofisService/LeofisService?WSDL";
+
+    private Context context;
+
+    public WebServiceAction(Context context) {
+        this.context=context;
+    }
+
+    public String getURL() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("URL","null");
+    }
 
     public void register(String theComputerID) {
 
@@ -31,7 +44,7 @@ public class WebServiceAction {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
 
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("register");
         Log.i("Method : ", soapAction);
@@ -80,7 +93,7 @@ public class WebServiceAction {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         //envelope.addMapping(NAMESPACE, "availableNodes", nodes.getClass());
         envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("registerAndroid");
         Log.i("Method : ", soapAction);
@@ -117,7 +130,7 @@ public class WebServiceAction {
         envelope.setOutputSoapObject(request);
 
         envelope.addMapping(NAMESPACE, "statisticalReports", new StatisticalReports().getClass());
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("retrieveStatistics");
         Log.i("Method : ", soapAction);
@@ -170,7 +183,7 @@ public class WebServiceAction {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
 
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("retrieveMaliciousPatterns");
         Log.i("Method : ", soapAction);
@@ -217,7 +230,7 @@ public class WebServiceAction {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         //envelope.addMapping(NAMESPACE, "availableNodes", nodes.getClass());
         envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("insertMaliciousPatterns");
         Log.i("Method : ", soapAction);
@@ -232,8 +245,9 @@ public class WebServiceAction {
         return result;
     }
 
-    public void delete(String theComputerID) {
+    public boolean delete(String theComputerID) {
 
+        Boolean result = false;
         SoapObject request = new SoapObject(NAMESPACE, "remove");
         PropertyInfo propertyInfo = new PropertyInfo();
 
@@ -246,22 +260,24 @@ public class WebServiceAction {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
 
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("remove");
         Log.i("Method : ", soapAction);
 
         try {
             androidHttpTransport.call(soapAction, envelope);
-
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            result = Boolean.parseBoolean(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return  result;
     }
 
-    public Boolean login(String username, String password) {
+    public Integer login(String username, String password) {
 
-        Boolean result = false;
+        Integer result = 0;
         SoapObject request = new SoapObject(NAMESPACE, "login");
 
         PropertyInfo propertyInfoOne = new PropertyInfo();
@@ -280,7 +296,7 @@ public class WebServiceAction {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
 
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
 
         String soapAction = getSoapAction("login");
         Log.i("Method : ", soapAction);
@@ -288,7 +304,8 @@ public class WebServiceAction {
         try {
             androidHttpTransport.call(soapAction, envelope);
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            result = Boolean.parseBoolean(response.toString());
+            result = Integer.parseInt(response.toString());
+            //result = Boolean.parseBoolean(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

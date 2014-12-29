@@ -1,11 +1,9 @@
 package com.leofis.network;
 
-import android.app.ActionBar;
+import android.app.*;
 import android.app.ActionBar.Tab;
-import android.app.ActivityManager;
-import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,11 +14,16 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import com.leofis.network.crypto.Decryptor;
@@ -51,7 +54,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     private String username;
     private String password;
 
-    private final String ADMIN_USERNAME = "admin"; /* must be replaced with property file */
+    //private final String ADMIN_USERNAME = "admin"; /* must be replaced with property file */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +157,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_settings) {
+            setURL();
             return true;
         }
         if (id == R.id.menu_logout) {
@@ -241,11 +245,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             DeleteTab.delEditText.setError("Wrong Input - Empty Field.");
             return;
         }
-
-        String yourRegister = "Delete the  " + genericID + " from database.";
-        Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.NO_GRAVITY, 0, 150);
-        toast.show();
         DeleteTab.delEditText.setText("");
         DeleteTab.delEditText.setError(null);
         AsyncTaskDelete taskDelete = new AsyncTaskDelete(genericID);
@@ -254,9 +253,12 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
     public void logout(View view) {
         SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor loginEditor = loginPreferences.edit();
-        loginEditor.clear();
-        loginEditor.commit();
+        SharedPreferences.Editor editor = loginPreferences.edit();
+        editor.remove("Username_Key");
+        editor.remove("Password_Key");
+        editor.remove("isLoggedIn");
+        editor.remove("User_Type");
+        editor.commit();
         stopService(new Intent(getBaseContext(), SilentHunter.class));
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
@@ -293,8 +295,8 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         protected Boolean doInBackground(String... params) {
 
-            WebServiceAction webservice = new WebServiceAction();
-            boolean result = webservice.insertPattern(ADMIN_USERNAME, password, pattern, patternTwo);
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
+            boolean result = webservice.insertPattern(username, password, pattern, patternTwo);
             return result;
         }
 
@@ -346,7 +348,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         protected String doInBackground(String... params) {
 
-            WebServiceAction webservice = new WebServiceAction();
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
             String result = webservice.retrievePattern("ADMIN_USERNAME", password);
             return result;
         }
@@ -414,13 +416,13 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         protected Void doInBackground(String... params) {
-            WebServiceAction webservice = new WebServiceAction();
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
             webservice.register(genericID);
             return null;
         }
     }
 
-    protected class AsyncTaskDelete extends AsyncTask<String, Void, Void> {
+    protected class AsyncTaskDelete extends AsyncTask<String, Void, Boolean> {
         private String genericID;
 
         public AsyncTaskDelete(String genericID) {
@@ -428,33 +430,48 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
         @Override
-        protected Void doInBackground(String... params) {
-            WebServiceAction webservice = new WebServiceAction();
-            webservice.delete(genericID);
-            return null;
+        protected Boolean doInBackground(String... params) {
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
+            boolean result = webservice.delete(genericID);
+            return result;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            DatabaseAdapter adapter = new DatabaseAdapter(getApplicationContext());
-            adapter.open();
-            adapter.deletePC(genericID);
-            adapter.close();
+        protected void onPostExecute(Boolean deleted) {
+            super.onPostExecute(deleted);
+
+            if(deleted)
+            {
+                String yourRegister = "The Computer " + genericID + " successfully deleted from database.";
+                Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 150);
+                toast.show();
+
+                DatabaseAdapter adapter = new DatabaseAdapter(getApplicationContext());
+                adapter.open();
+                adapter.deletePC(genericID);
+                adapter.close();
+            }else
+            {
+                String yourRegister = "The Computer  " + genericID + " doesn't exists.";
+                Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 150);
+                toast.show();
+            }
         }
     }
 
     private boolean checkSuperUser() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (preferences.getString("Username_Key", "default").equals(ADMIN_USERNAME)) return true;
+        if (preferences.getInt("User_Type",0) == 1) return true;
         else return false;
     }
 
     private boolean checkSuperUserLogin() {
         Intent intent = getIntent();
-        String username = intent.getStringExtra("Username_Key");
-        if (!intent.hasExtra("Username_Key")) return false;
-        if (username.equals(ADMIN_USERNAME)) return true;
+        int userType = intent.getIntExtra("User_Type", 0);
+        if (!intent.hasExtra("User_Type")) return false;
+        if (userType == 1) return true;
         else return false;
     }
 
@@ -581,8 +598,26 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         });
     }
 
-    private void fillExList() {
+    private void setURL()
+    {
+        final EditText txtUrl = new EditText(this);
+        txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
 
+        new AlertDialog.Builder(this)
+                .setTitle("Web Services Initialization")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods.")
+                .setView(txtUrl)
+                .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String url = txtUrl.getText().toString();
+                        if(url.isEmpty()) return;
+                        SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = loginPreferences.edit();
+                        editor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
+                        editor.commit();
+                    }
+                })
+                .show();
     }
 
     private void clearKeyboard() {

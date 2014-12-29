@@ -37,7 +37,8 @@
                 android:id="@+id/add_ip_textfield"
                 android:onClick="addMalicious"
                 android:textColorHint="@android:color/darker_gray"
-                android:layout_weight="1" android:inputType="number|text" android:maxLines="1"/>
+                android:layout_weight="1"
+                android:inputType="number|text" android:maxLines="1"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"

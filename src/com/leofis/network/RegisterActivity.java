@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -68,6 +69,7 @@ public class RegisterActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_settings) {
+            setURL();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -227,6 +229,28 @@ public class RegisterActivity extends Activity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    private void setURL()
+    {
+        final EditText txtUrl = new EditText(this);
+        txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Web Services Initialization")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods.")
+                .setView(txtUrl)
+                .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String url = txtUrl.getText().toString();
+                        if(url.isEmpty()) return;
+                        SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = loginPreferences.edit();
+                        editor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
+                        editor.commit();
+                    }
+                })
+                .show();
+    }
+
     private void errorRegister() {
         new AlertDialog.Builder(this)
                 .setTitle("Registration Failed!")
@@ -269,7 +293,7 @@ public class RegisterActivity extends Activity {
         @Override
         protected Boolean doInBackground(String... params) {
             publishProgress();
-            WebServiceAction webservice = new WebServiceAction();
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
             boolean result = webservice.registerAndroid(username, password, computers);
             return result;
         }

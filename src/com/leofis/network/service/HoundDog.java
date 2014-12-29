@@ -1,5 +1,6 @@
 package com.leofis.network.service;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import com.leofis.network.database.DatabaseAdapter;
 import com.leofis.network.server.StatisticalReports;
@@ -16,8 +17,14 @@ public class HoundDog implements Runnable {
 
     private DatabaseAdapter adapter;
 
+    private Context context;
+
     public HoundDog(boolean stillRun) {
         this.stillRun = stillRun;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public void setStillRun(boolean stillRun) {
@@ -52,7 +59,7 @@ public class HoundDog implements Runnable {
     protected class AsyncTaskRetrieve extends AsyncTask<String, Void, List<StatisticalReports>> {
         @Override
         protected List<StatisticalReports> doInBackground(String... params) {
-            WebServiceAction webservice = new WebServiceAction();
+            WebServiceAction webservice = new WebServiceAction(context);
             List<StatisticalReports> reportList = webservice.retrieveStatistical(username, password);
             return reportList;
         }

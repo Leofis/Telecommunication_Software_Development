@@ -25,6 +25,7 @@ public class SilentHunter extends Service {
         Log.i("Service", "Service is Restarting");
         DatabaseAdapter adapter = new DatabaseAdapter(this);
         puppy.setAdapter(adapter);
+        puppy.setContext(getApplicationContext());
         if (intent == null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             puppy.setUsername(preferences.getString("Username_Key", "default"));
