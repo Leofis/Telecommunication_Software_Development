@@ -349,7 +349,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         protected String doInBackground(String... params) {
 
             WebServiceAction webservice = new WebServiceAction(getApplicationContext());
-            String result = webservice.retrievePattern("ADMIN_USERNAME", password);
+            String result = webservice.retrievePattern(username, password);
             return result;
         }
 
@@ -514,6 +514,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         for (int i = 0; i < listComputerTitles.size(); i++) {
             Cursor cursorTwo = adapter.interfaceStatePerCo(listComputerTitles.get(i));
             List<String> tempList = new ArrayList<String>();
+
             while (!cursorTwo.isAfterLast()) {
                 String interfaceName = cursorTwo.getString(cursorTwo.getColumnIndex("InterfaceName"));
                 String state = cursorTwo.getString(cursorTwo.getColumnIndex("State"));
@@ -523,7 +524,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             listComputerInterfaces.put(listComputerTitles.get(i), tempList);
             cursorTwo.close();
         }
-        System.out.println(tempHash.size());
+        //System.out.println(tempHash.size());
         adapter.close();
 
         /****** Listeners ******/

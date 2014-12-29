@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.leofis.network.R;
 
@@ -50,10 +51,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.list_item, null);
         }
 
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.exListItem);
+        TextView txtListChild = (TextView) convertView.findViewById(R.id.exListItem);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.exListItemImage);
 
         txtListChild.setText(childText);
+        if(childText.contains("On"))
+        {
+            imageView.setImageResource(R.drawable.green);
+        }else if(childText.contains("Of")) imageView.setImageResource(R.drawable.yellow);
+        else imageView.setImageResource(R.drawable.red);
+
         return convertView;
     }
 
