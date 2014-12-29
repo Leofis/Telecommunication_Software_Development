@@ -3,8 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:weightSum="1">
+              android:layout_height="match_parent" android:weightSum="1">
 
     <TextView
             android:layout_width="wrap_content"
@@ -14,37 +13,34 @@
             android:id="@+id/textView"
             android:textSize="30sp"
             android:layout_gravity="center"/>
-
-    />
-    <TextView
-            android:layout_width="wrap_content"
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Hits with Malicious IPs"
-            android:id="@+id/textView2"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="10dp"/>
-    <GridView
+            android:paddingTop="10dp">
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Refresh"
+                android:id="@+id/refreshButton"
+                android:onClick="showPCNames"
+                android:layout_weight="1"/>
+        <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Apply Filter"
+                android:id="@+id/checkBox"
+                android:layout_weight="2"/>
+    </LinearLayout>
+    <ExpandableListView
             android:layout_width="wrap_content"
-            android:layout_height="130dp"
+            android:layout_height="135dp"
             android:paddingTop="25dp"
-            android:id="@+id/gridViewOne"
-            android:choiceMode="none"
-            android:layout_weight="0.46"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Hits with Malicious Patterns"
-            android:id="@+id/textView3"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="10dp"/>
-    <GridView
-            android:layout_width="wrap_content"
-            android:layout_height="130dp"
-            android:paddingTop="25dp"
-            android:id="@+id/gridViewTwo"
-            android:choiceMode="none"
-            android:layout_weight="0.50"/>
+            android:id="@+id/expandableListViewComputer"
+            android:layout_weight="1"/>
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

@@ -22,10 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.Toast;
+import android.widget.*;
 import com.leofis.network.crypto.Decryptor;
 import com.leofis.network.database.DatabaseAdapter;
 import com.leofis.network.server.WebServiceAction;
@@ -98,8 +95,8 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         //fordTab = actionBar.newTab().setIcon(R.drawable.ford_logo);
 
         // Setting tab titles.
-        statisticalTab = actionBar.newTab().setText("Stats Reports");
-        interfaceTab = actionBar.newTab().setText("Interfaces");
+        statisticalTab = actionBar.newTab().setText("Interfaces");
+        interfaceTab = actionBar.newTab().setText("Statistical");
         if (superUser) {
             maliciousTab = actionBar.newTab().setText("Malicious Items");
             deleteTab = actionBar.newTab().setText("Delete IDs");
@@ -502,10 +499,10 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 String nodeID = cursor.getString(cursor.getColumnIndex("GenericID"));
-                String interfaceName = cursor.getString(cursor.getColumnIndex("InterfaceName"));
-                String state = cursor.getString(cursor.getColumnIndex("State"));
                 if (!listComputerTitles.contains(nodeID)) listComputerTitles.add(nodeID);
-                System.out.println(nodeID + " " + interfaceName + " " + state);
+//                String interfaceName = cursor.getString(cursor.getColumnIndex("InterfaceName"));
+//                String state = cursor.getString(cursor.getColumnIndex("State"));
+//                System.out.println(nodeID + " " + interfaceName + " " + state);
                 cursor.moveToNext();
             }
         }
@@ -531,10 +528,10 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
         exListAdapter = new ExpandableListAdapter(this, listComputerTitles, listComputerInterfaces);
         // setting list adapter
-        StatisticalTab.computerListExView.setAdapter(exListAdapter);
+        InterfaceTab.computerListExView.setAdapter(exListAdapter);
 
         // ExListView Group click listener
-        StatisticalTab.computerListExView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        InterfaceTab.computerListExView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -546,7 +543,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         });
 
         // ExListView Group expanded listener
-        StatisticalTab.computerListExView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        InterfaceTab.computerListExView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
             @Override
             public void onGroupExpand(int groupPosition) {
@@ -557,7 +554,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         });
 
         // ExListView Group collapsed listener
-        StatisticalTab.computerListExView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+        InterfaceTab.computerListExView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
@@ -569,12 +566,11 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         });
 
         // ExListView on child click listener
-        StatisticalTab.computerListExView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        InterfaceTab.computerListExView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
                 String genericID;
                 String interfaceName;
 
@@ -585,18 +581,41 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 databaseAdapter.open();
 
                 Cursor cursor = databaseAdapter.getStatisticsPerIPInterface(genericID, interfaceName);
-                InterfaceTab.gridViewOne.setAdapter(new StatsAdapter(getApplicationContext(), cursor, 'i'));
+                StatisticalTab.gridViewOne.setAdapter(new StatsAdapter(getApplicationContext(), cursor, 'i'));
 
                 Cursor cursorTwo = databaseAdapter.getStatisticsPerPatternInterface(genericID, interfaceName);
-                InterfaceTab.gridViewTwo.setAdapter(new StatsAdapter(getApplicationContext(), cursorTwo, 'w'));
+                StatisticalTab.gridViewTwo.setAdapter(new StatsAdapter(getApplicationContext(), cursorTwo, 'w'));
+
+                if((cursor.getCount() == 0) && (cursorTwo.getCount() == 0)) noStatsShow();
+                else
+                {
+                    TextView textView = (TextView) findViewById(R.id.textViewIP);
+                    textView.setText("Hits with Malicious Patterns");
+                    TextView textViewTwo = (TextView) findViewById(R.id.textViewMalicious);
+                    textViewTwo.setText("Hits with Malicious IPs");
+
+                    viewPager.setCurrentItem(1);
+                }
 
                 cursor.close();
+                cursorTwo.close();
                 databaseAdapter.close();
-
-                viewPager.setCurrentItem(1);
                 return false;
             }
         });
+    }
+
+    private void noStatsShow() {
+        new AlertDialog.Builder(this)
+                .setTitle("No traffic")
+                .setMessage("The current interface you choose doesn't seem to have any malicious IP or pattern in the database.")
+                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void setURL()

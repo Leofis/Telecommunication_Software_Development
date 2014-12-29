@@ -18,16 +18,16 @@ public class TabAdapter extends FragmentPagerAdapter {
         if (!superUser) {
             switch (index) {
                 case 0:
-                    return new StatisticalTab();
-                case 1:
                     return new InterfaceTab();
+                case 1:
+                    return new StatisticalTab();
             }
         } else {
             switch (index) {
                 case 0:
-                    return new StatisticalTab();
-                case 1:
                     return new InterfaceTab();
+                case 1:
+                    return new StatisticalTab();
                 case 2:
                     return new MaliciousTab();
                 case 3:

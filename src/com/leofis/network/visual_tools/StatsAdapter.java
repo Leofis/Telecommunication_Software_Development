@@ -2,6 +2,7 @@ package com.leofis.network.visual_tools;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,7 @@ public class StatsAdapter extends BaseAdapter {
 
         tv1.setText(item.interfaceIP);
         tv2.setText(item.malicious);
+        tv2.setTypeface(null, Typeface.BOLD);
         tv3.setText(String.valueOf(item.count));
 
         return view;

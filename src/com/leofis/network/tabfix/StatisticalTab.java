@@ -5,19 +5,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ExpandableListView;
+import android.widget.GridView;
 import com.leofis.network.R;
 
 public class StatisticalTab extends Fragment {
-
-    public static ExpandableListView computerListExView;
+    public static GridView gridViewTwo;
+    public static GridView gridViewOne;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.statistical_tab_layout, container, false);
-        Button logout = (Button) view.findViewById(R.id.register_button);
-        computerListExView = (ExpandableListView) view.findViewById(R.id.expandableListViewComputer);
+        gridViewOne = (GridView) view.findViewById(R.id.gridViewOne);
+        gridViewTwo = (GridView) view.findViewById(R.id.gridViewTwo);
 
         return view;
     }
