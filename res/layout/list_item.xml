@@ -6,7 +6,7 @@
 
     <ImageView
             android:id="@+id/exListItemImage"
-            android:layout_width="25dp"
+            android:layout_width="22dp"
             android:layout_height="30dp"
             android:paddingTop="8dp"
             android:paddingBottom="2dp"

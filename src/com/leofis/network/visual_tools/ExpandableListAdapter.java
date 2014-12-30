@@ -57,9 +57,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         txtListChild.setText(childText);
         if(childText.contains("On"))
         {
-            imageView.setImageResource(R.drawable.green);
-        }else if(childText.contains("Of")) imageView.setImageResource(R.drawable.yellow);
-        else imageView.setImageResource(R.drawable.red);
+            imageView.setImageResource(R.drawable.online);
+        }else if(childText.contains("Of")) imageView.setImageResource(R.drawable.yellow_offline);
+        else imageView.setImageResource(R.drawable.shut_down);
 
         return convertView;
     }

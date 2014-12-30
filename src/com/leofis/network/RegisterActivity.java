@@ -234,9 +234,17 @@ public class RegisterActivity extends Activity {
         final EditText txtUrl = new EditText(this);
         txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String string = preferences.getString("URL", "Empty");
+        if(!string.equals("Empty"))
+        {
+            String[] part = string.split("/");
+            string = part[2].split(":")[0];
+        }
+
         new AlertDialog.Builder(this)
                 .setTitle("Web Services Initialization")
-                .setMessage("Please type the desired IP for the normal operation of the Web methods.")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods. ("+string+")")
                 .setView(txtUrl)
                 .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {

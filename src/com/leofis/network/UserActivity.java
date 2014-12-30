@@ -316,7 +316,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 else show = pattern;
                 String maliciousMessage = "The " + show + " added successfully.";
                 Toast toast = Toast.makeText(getApplicationContext(), maliciousMessage, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.NO_GRAVITY, 0, -30);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 60);
                 toast.show();
                 MaliciousTab.addIPEditText.setText("");
                 MaliciousTab.addPatternEditText.setText("");
@@ -326,7 +326,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 else show = pattern;
                 String maliciousMessage = "Error " + show + " couldn't be added.";
                 Toast toast = Toast.makeText(getApplicationContext(), maliciousMessage, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.NO_GRAVITY, 0, -30);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 60);
                 toast.show();
                 MaliciousTab.addIPEditText.setText("");
                 MaliciousTab.addPatternEditText.setText("");
@@ -398,7 +398,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             } else {
                 String message = "Error : No Malicious Patterns found.";
                 Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.NO_GRAVITY, 0, -30);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 60);
                 toast.show();
             }
         }
@@ -623,9 +623,17 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         final EditText txtUrl = new EditText(this);
         txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String string = preferences.getString("URL", "Empty");
+        if(!string.equals("Empty"))
+        {
+            String[] part = string.split("/");
+            string = part[2].split(":")[0];
+        }
+
         new AlertDialog.Builder(this)
                 .setTitle("Web Services Initialization")
-                .setMessage("Please type the desired IP for the normal operation of the Web methods.")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods. ("+string+")")
                 .setView(txtUrl)
                 .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
