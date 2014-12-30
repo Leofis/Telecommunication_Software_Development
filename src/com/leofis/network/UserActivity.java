@@ -37,20 +37,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class UserActivity extends FragmentActivity implements ActionBar.TabListener {
 
     // Declaring our tabs and the corresponding fragments.
     ActionBar.Tab maliciousTab, statisticalTab, interfaceTab, deleteTab;
 
-    private ViewPager viewPager;
+    public static ViewPager viewPager;
     private TabAdapter tabAdapter;
     private ActionBar actionBar;
     private boolean superUser;
 
     private String username;
     private String password;
-
     //private final String ADMIN_USERNAME = "admin"; /* must be replaced with property file */
 
     @Override
@@ -484,6 +482,54 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
+    private void setURL() {
+        final EditText txtUrl = new EditText(this);
+        txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String string = preferences.getString("URL", "Empty");
+        if (!string.equals("Empty")) {
+            String[] part = string.split("/");
+            string = part[2].split(":")[0];
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Web Services Initialization")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods. (" + string + ")")
+                .setView(txtUrl)
+                .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String url = txtUrl.getText().toString();
+                        if (url.isEmpty()) return;
+                        SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = loginPreferences.edit();
+                        editor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
+                        editor.commit();
+                    }
+                })
+                .show();
+    }
+
+    private void clearKeyboard() {
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(DeleteTab.delEditText.getWindowToken(), 0);
+    }
+
+    private void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (SilentHunter.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void getData() {
 
         ExpandableListAdapter exListAdapter;
@@ -616,55 +662,5 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-    }
-
-    private void setURL()
-    {
-        final EditText txtUrl = new EditText(this);
-        txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String string = preferences.getString("URL", "Empty");
-        if(!string.equals("Empty"))
-        {
-            String[] part = string.split("/");
-            string = part[2].split(":")[0];
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle("Web Services Initialization")
-                .setMessage("Please type the desired IP for the normal operation of the Web methods. ("+string+")")
-                .setView(txtUrl)
-                .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String url = txtUrl.getText().toString();
-                        if(url.isEmpty()) return;
-                        SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        SharedPreferences.Editor editor = loginPreferences.edit();
-                        editor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
-                        editor.commit();
-                    }
-                })
-                .show();
-    }
-
-    private void clearKeyboard() {
-        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.hideSoftInputFromWindow(DeleteTab.delEditText.getWindowToken(), 0);
-    }
-
-    private void showKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (SilentHunter.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 }
