@@ -25,7 +25,8 @@ public class TabAdapter extends FragmentPagerAdapter {
         } else {
             switch (index) {
                 case 0:
-                    return new InterfaceTab();
+                    return
+                            new InterfaceTab();
                 case 1:
                     return new StatisticalTab();
                 case 2:

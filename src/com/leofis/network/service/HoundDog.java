@@ -1,26 +1,34 @@
 package com.leofis.network.service;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import com.leofis.network.database.DatabaseAdapter;
 import com.leofis.network.server.StatisticalReports;
 import com.leofis.network.server.WebServiceAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HoundDog implements Runnable {
+
     private long sleepTime = 20 * 1000; /*property value*/
     private volatile boolean stillRun;
 
     private String username = null;
     private String password = null;
 
-    private DatabaseAdapter adapter;
+    private ArrayList<String> offlineData;
 
+    private DatabaseAdapter adapter;
     private Context context;
 
     public HoundDog(boolean stillRun) {
+
         this.stillRun = stillRun;
+        offlineData = new ArrayList<String>();
     }
 
     public void setContext(Context context) {
@@ -53,7 +61,34 @@ public class HoundDog implements Runnable {
             }
             AsyncTaskRetrieve taskRetrieve = new AsyncTaskRetrieve();
             taskRetrieve.execute();
+            getOfflineWork();
+            if (!offlineData.isEmpty() && isOnline()) {
+                for (int i = 0; i < offlineData.size(); i++) {
+                    String[] parts = offlineData.get(i).split(" ");
+
+                    if (parts[0].equals("i")) {
+                        AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(parts[1], null);
+                        taskAddPattern.execute();
+                        jobDone(offlineData.get(i));
+                    } else if (parts[0].equals("w")) {
+                        AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(null, parts[1]);
+                        taskAddPattern.execute();
+                        jobDone(offlineData.get(i));
+                    } else if (parts[0].equals("l")) {
+                        AsyncTaskDelete taskDelete = new AsyncTaskDelete(parts[1]);
+                        taskDelete.execute();
+                        jobDone(offlineData.get(i));
+                    }
+                }
+                offlineData.clear();
+            }
         }
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = manager.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     protected class AsyncTaskRetrieve extends AsyncTask<String, Void, List<StatisticalReports>> {
@@ -81,6 +116,38 @@ public class HoundDog implements Runnable {
                 saveLiveInstance(liveInterfaces);
                 databaseMirror(patternFreq, "malicious");
             }
+        }
+    }
+
+    protected class AsyncTaskAddPattern extends AsyncTask<String, Integer, Boolean> {
+        private String pattern;
+        private String patternTwo;
+
+        public AsyncTaskAddPattern(String pattern, String patternTwo) {
+            this.pattern = pattern;
+            this.patternTwo = patternTwo;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            WebServiceAction webservice = new WebServiceAction(context);
+            boolean result = webservice.insertPattern(username, password, pattern, patternTwo);
+            return result;
+        }
+    }
+
+    protected class AsyncTaskDelete extends AsyncTask<String, Void, Boolean> {
+        private String nodeID;
+
+        public AsyncTaskDelete(String nodeID) {
+            this.nodeID = nodeID;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            WebServiceAction webservice = new WebServiceAction(context);
+            boolean result = webservice.delete(nodeID);
+            return result;
         }
     }
 
@@ -113,6 +180,27 @@ public class HoundDog implements Runnable {
                         maliciousField, count);
             }
         }
+        adapter.close();
+    }
+
+    private void getOfflineWork() {
+        adapter.open();
+        Cursor cursor = adapter.getAllOfflineWork();
+        cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String requestedJob = cursor.getString(cursor.getColumnIndex("RequestedJob"));
+                if (!offlineData.contains(requestedJob)) offlineData.add(requestedJob);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        adapter.close();
+    }
+
+    private void jobDone(String job) {
+        adapter.open();
+        adapter.deleteJob(job);
         adapter.close();
     }
 

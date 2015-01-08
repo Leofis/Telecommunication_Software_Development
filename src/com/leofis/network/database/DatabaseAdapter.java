@@ -23,6 +23,7 @@ public class DatabaseAdapter {
     private static final String DATABASE_TABLE_ONE = "MaliciousIPCount";
     private static final String DATABASE_TABLE_TWO = "MaliciousPatternCount";
     private static final String DATABASE_TABLE_THREE = "InterfaceState";
+    private static final String DATABASE_TABLE_FOUR = "OfflineWork";
     private static final int DATABASE_VERSION = 1;
 
     private static final String CREATE_TABLE_0NE =
@@ -41,6 +42,11 @@ public class DatabaseAdapter {
             "create table InterfaceState (GenericID text not null, "
                     + "InterfaceName text not null, State text, "
                     + "primary key (GenericID, InterfaceName));";
+
+    private static final String CREATE_TABLE_FOUR =
+            "create table OfflineWork (_id integer primary key autoincrement, "
+                    + "RequestedJob text not null"
+                    + ");";
 
     private final Context context;
 
@@ -62,6 +68,7 @@ public class DatabaseAdapter {
             db.execSQL(CREATE_TABLE_0NE);
             db.execSQL(CREATE_TABLE_TWO);
             db.execSQL(CREATE_TABLE_THREE);
+            db.execSQL(CREATE_TABLE_FOUR);
         }
 
         @Override
@@ -73,7 +80,7 @@ public class DatabaseAdapter {
             db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_ONE);
             db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_TWO);
             db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_THREE);
-
+            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_FOUR);
             // create new tables
             onCreate(db);
         }
@@ -121,6 +128,13 @@ public class DatabaseAdapter {
         return db.insert(DATABASE_TABLE_THREE, null, initialValues);
     }
 
+    //---insert the first count to the OfflineWork  table---
+    public long insertOfflineWork(String requestedJob) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("RequestedJob", requestedJob);
+        return db.insert(DATABASE_TABLE_FOUR, null, initialValues);
+    }
+
     //---deletes a particular rows---
     public synchronized void deletePC(String genericID) {
         db.delete(DATABASE_TABLE_ONE, KEY_GENERIC_ID +
@@ -131,11 +145,18 @@ public class DatabaseAdapter {
                 "=?", new String[]{genericID});
     }
 
+    //---deletes a particular rows OfflineWork---
+    public synchronized void deleteJob(String requestedJob) {
+        db.delete(DATABASE_TABLE_FOUR, "RequestedJob" +
+                "=?", new String[]{requestedJob});
+    }
+
     //---deletes the database---
     public synchronized void deleteDB() {
         db.execSQL("delete from " + DATABASE_TABLE_ONE);
         db.execSQL("delete from " + DATABASE_TABLE_TWO);
         db.execSQL("delete from " + DATABASE_TABLE_THREE);
+        db.execSQL("delete from " + DATABASE_TABLE_FOUR);
     }
 
     //---retrieves all the IPTable---
@@ -174,6 +195,18 @@ public class DatabaseAdapter {
                         KEY_GENERIC_ID,
                         KEY_INTERFACE_NAME,
                         STATE},
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    //---retrieves all the OfflineWork---
+    public Cursor getAllOfflineWork() {
+        return db.query(DATABASE_TABLE_FOUR, new String[]{
+                        "_id",
+                        "RequestedJob"},
                 null,
                 null,
                 null,

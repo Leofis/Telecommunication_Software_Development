@@ -22,20 +22,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Toast;
 import com.leofis.network.crypto.Decryptor;
 import com.leofis.network.database.DatabaseAdapter;
 import com.leofis.network.server.WebServiceAction;
 import com.leofis.network.service.SilentHunter;
-import com.leofis.network.tabfix.*;
-import com.leofis.network.visual_tools.ExpandableListAdapter;
-import com.leofis.network.visual_tools.StatsAdapter;
+import com.leofis.network.tabfix.DeleteTab;
+import com.leofis.network.tabfix.MaliciousTab;
+import com.leofis.network.tabfix.TabAdapter;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class UserActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -69,6 +70,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         viewPager = (ViewPager) findViewById(R.id.swipe);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), superUser);
         viewPager.setAdapter(tabAdapter);
+        viewPager.setOffscreenPageLimit(3);
 
         //Button register = (Button) findViewById(R.id.register_button);
         //Button unregister = (Button) findViewById(R.id.unregister_button);
@@ -170,7 +172,9 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-
+        MaliciousTab.addIPEditText.setError(null);
+        MaliciousTab.addPatternEditText.setError(null);
+        DeleteTab.delEditText.setError(null);
     }
 
     @Override
@@ -179,8 +183,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     public void addMalicious(View view) {
-        if (!isOnline()) return;
-        clearKeyboard();
+        // clearKeyboard();
         String maliciousIP = MaliciousTab.addIPEditText.getText().toString();
         if (maliciousIP.isEmpty() || maliciousIP.contains(" ")) {
             MaliciousTab.addIPEditText.setText("");
@@ -188,12 +191,23 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             return;
         }
         MaliciousTab.addIPEditText.setError(null);
-        AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(maliciousIP, null);
-        taskAddPattern.execute();
+        if (!isOnline()) {
+            doOfflineWork("i " + maliciousIP);
+            String maliciousMessage = "The IP " + maliciousIP + " will be added when connection ll be established.";
+            Toast toast = Toast.makeText(getApplicationContext(), maliciousMessage, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.NO_GRAVITY, 0, 70);
+            toast.show();
+            MaliciousTab.addIPEditText.setText("");
+            MaliciousTab.addPatternEditText.setText("");
+            return;
+        } else {
+            AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(maliciousIP, null);
+            taskAddPattern.execute();
+        }
+
     }
 
     public void addMaliciousPa(View view) {
-        if (!isOnline()) return;
         clearKeyboard();
         String maliciousPattern = MaliciousTab.addPatternEditText.getText().toString();
         if (maliciousPattern.isEmpty() || maliciousPattern.contains(" ")) {
@@ -202,8 +216,19 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             return;
         }
         MaliciousTab.addPatternEditText.setError(null);
-        AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(null, maliciousPattern);
-        taskAddPattern.execute();
+        if (!isOnline()) {
+            doOfflineWork("w " + maliciousPattern);
+            String maliciousMessage = "The word " + maliciousPattern + " will be added when connection ll be established.";
+            Toast toast = Toast.makeText(getApplicationContext(), maliciousMessage, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.NO_GRAVITY, 0, 70);
+            toast.show();
+            MaliciousTab.addIPEditText.setText("");
+            MaliciousTab.addPatternEditText.setText("");
+            return;
+        } else {
+            AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(null, maliciousPattern);
+            taskAddPattern.execute();
+        }
     }
 
     public void showAllMalicious(View view) {
@@ -223,7 +248,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         }
         String yourRegister = "The " + genericID + " successfully registered.";
         Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.NO_GRAVITY, 0, 150);
+        toast.setGravity(Gravity.NO_GRAVITY, 0, 90);
         toast.show();
         DeleteTab.delEditText.setText("");
         DeleteTab.delEditText.setError(null);
@@ -232,7 +257,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     public void unregisterComputer(View view) {
-        if (!isOnline()) return;
         clearKeyboard();
         String genericID = DeleteTab.delEditText.getText().toString();
         if (genericID.isEmpty() || genericID.contains(" ")) {
@@ -242,32 +266,60 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         }
         DeleteTab.delEditText.setText("");
         DeleteTab.delEditText.setError(null);
-        AsyncTaskDelete taskDelete = new AsyncTaskDelete(genericID);
-        taskDelete.execute();
+        if (!isOnline()) {
+            doOfflineWork("l " + genericID);
+            String maliciousMessage = "The Computer " + genericID + " will be deleted when connection ll be established.";
+            Toast toast = Toast.makeText(getApplicationContext(), maliciousMessage, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.NO_GRAVITY, 0, 90);
+            toast.show();
+            return;
+        } else {
+            AsyncTaskDelete taskDelete = new AsyncTaskDelete(genericID);
+            taskDelete.execute();
+        }
+    }
+
+    public void showAllComputers(View view) {
+        final ArrayList<String> listComputerTitles = new ArrayList<String>();
+        DatabaseAdapter adapter = new DatabaseAdapter(this);
+        adapter.open();
+        Cursor cursor = adapter.getAllInterfaceTable();
+        cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String nodeID = cursor.getString(cursor.getColumnIndex("GenericID"));
+                if (!listComputerTitles.contains(nodeID)) listComputerTitles.add(nodeID);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        if (!listComputerTitles.isEmpty()) {
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listComputerTitles);
+            DeleteTab.listViewComputer.setAdapter(arrayAdapter);
+            DeleteTab.listViewComputer.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+                public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                    DeleteTab.delEditText.setText(listComputerTitles.get(pos));
+                    String yourRegister = "Press 'Delete' button to continue the deletion process.";
+                    Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.NO_GRAVITY, 0, 90);
+                    toast.show();
+                    return true;
+                }
+            });
+        }
     }
 
     public void logout(View view) {
-        SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = loginPreferences.edit();
-        editor.remove("Username_Key");
-        editor.remove("Password_Key");
-        editor.remove("isLoggedIn");
-        editor.remove("User_Type");
-        editor.commit();
-        stopService(new Intent(getBaseContext(), SilentHunter.class));
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
-        finish();
+        AsyncTaskLogout taskLogout = new AsyncTaskLogout(username, password);
+        taskLogout.execute();
     }
 
     private boolean isOnline() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = manager.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    public void showPCNames(View view) {
-        getData();
     }
 
     /*----------------------------------------------*/
@@ -435,30 +487,65 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         protected void onPostExecute(Boolean deleted) {
             super.onPostExecute(deleted);
 
-            if(deleted)
-            {
+            if (deleted) {
                 String yourRegister = "The Computer " + genericID + " successfully deleted from database.";
                 Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.NO_GRAVITY, 0, 150);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 90);
                 toast.show();
 
                 DatabaseAdapter adapter = new DatabaseAdapter(getApplicationContext());
                 adapter.open();
                 adapter.deletePC(genericID);
                 adapter.close();
-            }else
-            {
+            } else {
                 String yourRegister = "The Computer  " + genericID + " doesn't exists.";
                 Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.NO_GRAVITY, 0, 150);
+                toast.setGravity(Gravity.NO_GRAVITY, 0, 90);
                 toast.show();
+            }
+        }
+    }
+
+    protected class AsyncTaskLogout extends AsyncTask<String, Void, Boolean> {
+
+        private String username;
+        private String password;
+
+        public AsyncTaskLogout(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
+            boolean result = webservice.logout(username, password);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean logoutIndeed) {
+            super.onPostExecute(logoutIndeed);
+
+            if (logoutIndeed) {
+                SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = loginPreferences.edit();
+                editor.remove("Username_Key");
+                editor.remove("Password_Key");
+                editor.remove("isLoggedIn");
+                editor.remove("User_Type");
+                editor.commit();
+                stopService(new Intent(getBaseContext(), SilentHunter.class));
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         }
     }
 
     private boolean checkSuperUser() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (preferences.getInt("User_Type",0) == 1) return true;
+        if (preferences.getInt("User_Type", 0) == 1) return true;
         else return false;
     }
 
@@ -480,6 +567,13 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             username = intent.getStringExtra("Username_Key");
             password = intent.getStringExtra("Password_Key");
         }
+    }
+
+    private void doOfflineWork(String requestedJob) {
+        DatabaseAdapter adapter = new DatabaseAdapter(this);
+        adapter.open();
+        adapter.insertOfflineWork(requestedJob);
+        adapter.close();
     }
 
     private void setURL() {
@@ -528,139 +622,5 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             }
         }
         return false;
-    }
-
-    private void getData() {
-
-        ExpandableListAdapter exListAdapter;
-        final List<String> listComputerTitles = new ArrayList<String>();
-        final HashMap<String, List<String>> listComputerInterfaces = new HashMap<String, List<String>>();
-        HashMap<String, List<String>> tempHash = new HashMap<String, List<String>>();
-//        List<String> tempList = new ArrayList<String>();
-
-        DatabaseAdapter adapter = new DatabaseAdapter(this);
-        adapter.open();
-        Cursor cursor = adapter.getAllInterfaceTable();
-        cursor.moveToFirst();
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                String nodeID = cursor.getString(cursor.getColumnIndex("GenericID"));
-                if (!listComputerTitles.contains(nodeID)) listComputerTitles.add(nodeID);
-//                String interfaceName = cursor.getString(cursor.getColumnIndex("InterfaceName"));
-//                String state = cursor.getString(cursor.getColumnIndex("State"));
-//                System.out.println(nodeID + " " + interfaceName + " " + state);
-                cursor.moveToNext();
-            }
-        }
-        cursor.close();
-
-        for (int i = 0; i < listComputerTitles.size(); i++) {
-            Cursor cursorTwo = adapter.interfaceStatePerCo(listComputerTitles.get(i));
-            List<String> tempList = new ArrayList<String>();
-
-            while (!cursorTwo.isAfterLast()) {
-                String interfaceName = cursorTwo.getString(cursorTwo.getColumnIndex("InterfaceName"));
-                String state = cursorTwo.getString(cursorTwo.getColumnIndex("State"));
-                tempList.add(interfaceName + " " + state);
-                cursorTwo.moveToNext();
-            }
-            listComputerInterfaces.put(listComputerTitles.get(i), tempList);
-            cursorTwo.close();
-        }
-        //System.out.println(tempHash.size());
-        adapter.close();
-
-        /****** Listeners ******/
-
-        exListAdapter = new ExpandableListAdapter(this, listComputerTitles, listComputerInterfaces);
-        // setting list adapter
-        InterfaceTab.computerListExView.setAdapter(exListAdapter);
-
-        // ExListView Group click listener
-        InterfaceTab.computerListExView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-
-        // ExListView Group expanded listener
-        InterfaceTab.computerListExView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        listComputerTitles.get(groupPosition) + " Expanded",
-//                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // ExListView Group collapsed listener
-        InterfaceTab.computerListExView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        listComputerTitles.get(groupPosition) + " Collapsed",
-//                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        // ExListView on child click listener
-        InterfaceTab.computerListExView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                String genericID;
-                String interfaceName;
-
-                genericID = listComputerTitles.get(groupPosition);
-                interfaceName = listComputerInterfaces.get(listComputerTitles.get(groupPosition)).get(childPosition).split(" ")[0];
-
-                DatabaseAdapter databaseAdapter = new DatabaseAdapter(getApplicationContext());
-                databaseAdapter.open();
-
-                Cursor cursor = databaseAdapter.getStatisticsPerIPInterface(genericID, interfaceName);
-                StatisticalTab.gridViewOne.setAdapter(new StatsAdapter(getApplicationContext(), cursor, 'i'));
-
-                Cursor cursorTwo = databaseAdapter.getStatisticsPerPatternInterface(genericID, interfaceName);
-                StatisticalTab.gridViewTwo.setAdapter(new StatsAdapter(getApplicationContext(), cursorTwo, 'w'));
-
-                if((cursor.getCount() == 0) && (cursorTwo.getCount() == 0)) noStatsShow();
-                else
-                {
-                    TextView textView = (TextView) findViewById(R.id.textViewIP);
-                    textView.setText("Hits with Malicious Patterns");
-                    TextView textViewTwo = (TextView) findViewById(R.id.textViewMalicious);
-                    textViewTwo.setText("Hits with Malicious IPs");
-
-                    viewPager.setCurrentItem(1);
-                }
-
-                cursor.close();
-                cursorTwo.close();
-                databaseAdapter.close();
-                return false;
-            }
-        });
-    }
-
-    private void noStatsShow() {
-        new AlertDialog.Builder(this)
-                .setTitle("No traffic")
-                .setMessage("The current interface you choose doesn't seem to have any malicious IP or pattern in the database.")
-                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
     }
 }

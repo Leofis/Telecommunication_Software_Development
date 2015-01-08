@@ -24,6 +24,7 @@ public class TabListener implements ActionBar.TabListener {
     public void onTabSelected(Tab tab, FragmentTransaction transaction) {
         //transaction.replace(R.id.activity_user,fragment);
         viewPager.setCurrentItem(tab.getPosition());
+
     }
 
     // When a tab is unselected, we have to hide it from the user's view.

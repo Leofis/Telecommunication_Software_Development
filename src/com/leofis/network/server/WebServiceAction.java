@@ -22,12 +22,12 @@ public class WebServiceAction {
     private Context context;
 
     public WebServiceAction(Context context) {
-        this.context=context;
+        this.context = context;
     }
 
     public String getURL() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("URL","null");
+        return preferences.getString("URL", "null");
     }
 
     public void register(String theComputerID) {
@@ -272,7 +272,7 @@ public class WebServiceAction {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  result;
+        return result;
     }
 
     public Integer login(String username, String password) {
@@ -306,6 +306,42 @@ public class WebServiceAction {
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
             result = Integer.parseInt(response.toString());
             //result = Boolean.parseBoolean(response.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public Boolean logout(String username, String password) {
+
+        Boolean result = false;
+        SoapObject request = new SoapObject(NAMESPACE, "logout");
+
+        PropertyInfo propertyInfoOne = new PropertyInfo();
+        propertyInfoOne.setName("username");
+        propertyInfoOne.setValue(username);
+        propertyInfoOne.setType(String.class);
+
+        PropertyInfo propertyInfoTwo = new PropertyInfo();
+        propertyInfoTwo.setName("password");
+        propertyInfoTwo.setValue(password);
+        propertyInfoTwo.setType(String.class);
+
+        request.addProperty(propertyInfoOne);
+        request.addProperty(propertyInfoTwo);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(getURL());
+
+        String soapAction = getSoapAction("logout");
+        Log.i("Method : ", soapAction);
+
+        try {
+            androidHttpTransport.call(soapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            result = Boolean.parseBoolean(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

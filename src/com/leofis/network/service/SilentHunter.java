@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 import com.leofis.network.database.DatabaseAdapter;
 
 public class SilentHunter extends Service {
@@ -43,6 +42,7 @@ public class SilentHunter extends Service {
     public void onDestroy() {
         super.onDestroy();
         puppy.setStillRun(false);
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        Log.i("Service", "Service is Destroyed");
+        // Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 }
