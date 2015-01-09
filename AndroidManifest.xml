@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.leofis.network"
           android:versionCode="1"
-          android:versionName="2.10">
+          android:versionName="2.50">
     <uses-sdk android:minSdkVersion="19"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <application android:label="@string/app_name"
-                 android:icon="@drawable/ic_launcher" >
+    <application android:label="@string/application_name"
+                 android:icon="@drawable/ic_launcher"
+                 android:theme="@style/Theme.Kesso">
 
         <activity android:name=".DashboardActivity"
-                  android:label="@string/app_name"
+                  android:label="@string/application_name"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -20,7 +22,7 @@
         </activity>
 
         <activity android:name=".UserActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/application_name">
 
             <intent-filter>
                 <action android:name="com.leofis.network.UserActivity"/>
@@ -30,17 +32,17 @@
 
         <activity android:name=".LoginActivity"
                   android:label="Login Window"
-                  android:noHistory="true">
+                  android:noHistory="true"
+                  android:theme="@style/Theme.Kesso">
             <intent-filter>
                 <action android:name="com.leofis.network.LoginActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".HomeActivity"/>
-
         <activity android:name=".RegisterActivity"
-                  android:label="Welcome &amp; Register">
+                  android:label="Welcome &amp; Register"
+                  android:theme="@style/Theme.Kesso">
             <intent-filter>
                 <action android:name="com.leofis.network.RegisterActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>

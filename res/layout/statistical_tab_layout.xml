@@ -5,29 +5,39 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:weightSum="1">
-
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Statistical Reports"
+            android:textColor="@color/chocolate"
+            android:textSize="29sp"
+            android:textStyle="italic"
             android:id="@+id/textView"
-            android:textSize="30sp"
             android:layout_gravity="center"/>
-
     />
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/textViewMalicious"
+            android:textColor="@color/darkGreen"
+            android:textStyle="bold"
             android:layout_gravity="center_horizontal"
             android:paddingTop="10dp"/>
-            <!--android:text="Hits with Malicious IPs"-->
+    <!--android:text="Hits with Malicious IPs"-->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="25dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/textViewMaliciousDetails"
+            android:textColor="@color/oliveOil"
+            android:textStyle="bold"/>
     <GridView
             android:layout_width="wrap_content"
             android:layout_height="130dp"
-            android:paddingTop="25dp"
+            android:paddingTop="10dp"
             android:id="@+id/gridViewOne"
             android:choiceMode="none"
             android:layout_weight="0.46"/>
@@ -36,15 +46,24 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/textViewIP"
+            android:textStyle="bold"
+            android:textColor="@color/darkGreen"
             android:layout_gravity="center_horizontal"
             android:paddingTop="10dp"/>
-            <!--android:text="Hits with Malicious Patterns"-->
+    <!--android:text="Hits with Malicious Patterns"-->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="25dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/textViewIPsDetails"
+            android:textColor="@color/oliveOil"
+            android:textStyle="bold"/>
     <GridView
             android:layout_width="wrap_content"
             android:layout_height="130dp"
-            android:paddingTop="25dp"
+            android:paddingTop="10dp"
             android:id="@+id/gridViewTwo"
             android:choiceMode="none"
             android:layout_weight="0.50"/>
-
 </LinearLayout>

@@ -3,14 +3,17 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
+              android:background="@drawable/wood"
               android:weightSum="1">
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Login to proceed :"
+            android:text="Login to proceed"
+            android:textStyle="italic"
             android:id="@+id/textView"
-            android:textSize="30sp"
+            android:textColor="@color/chocolate"
+            android:textSize="29sp"
             android:layout_gravity="center"/>
     <Space
             android:layout_width="match_parent"
@@ -48,7 +51,7 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
-                android:text="@string/Login_button"
+                android:text="@string/login_button"
                 android:id="@+id/login_button"
                 android:onClick="loginUser"
                 android:clickable="true"
@@ -61,7 +64,8 @@
            android:layout_gravity="center_horizontal"
            android:minHeight="50sp"
            android:id="@+id/space"
-           android:layout_weight="0.84"/>
+           android:layout_weight="0.84"
+           android:background="@android:color/background_light"/>
     <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="match_parent"

@@ -19,4 +19,3 @@ public class Decryptor {
         return new String(decrypted, "UTF-8");
     }
 }
-

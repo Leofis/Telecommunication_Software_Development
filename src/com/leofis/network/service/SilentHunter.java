@@ -20,7 +20,6 @@ public class SilentHunter extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
-        //Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         Log.i("Service", "Service is Restarting");
         DatabaseAdapter adapter = new DatabaseAdapter(this);
         puppy.setAdapter(adapter);

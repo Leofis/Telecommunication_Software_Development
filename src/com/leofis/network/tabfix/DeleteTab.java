@@ -18,9 +18,6 @@ public class DeleteTab extends Fragment {
 
     {
         View view = inflater.inflate(R.layout.delete_tab_layout, container, false);
-        //Button register = (Button) view.findViewById(R.id.register_button);
-        //Button unregister = (Button) view.findViewById(R.id.unregister_button);
-        //Button showComputerButton = (Button) view.findViewById(R.id.showAllComputers);
         delEditText = (EditText) view.findViewById(R.id.genericID_textfield);
         listViewComputer = (ListView) view.findViewById(R.id.computer_listView);
         return view;

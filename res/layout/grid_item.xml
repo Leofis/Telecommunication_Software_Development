@@ -15,12 +15,12 @@
             android:paddingLeft="150dp"
             android:paddingRight="0dp"
             android:textSize="19dp"/>
-
     <TextView
             android:id="@+id/gridThree"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="280dp"
+            android:textColor="@color/tomato"
             android:paddingRight="0dp"
             android:textSize="19dp"/>
 </FrameLayout>

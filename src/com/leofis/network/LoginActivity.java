@@ -50,9 +50,6 @@ public class LoginActivity extends Activity {
         loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         loginEditor = loginPreferences.edit();
 
-//        MyListener x = new MyListener(getApplicationContext());
-//        registerButton.setOnClickListenerx);
-
         registerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
@@ -82,23 +79,8 @@ public class LoginActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-//    class MyListener implements View.OnClickListener {
-//        Activity activity;
-//
-//        MyListener(Activity activity) {
-//            this.activity = activity;
-//        }
-//
-//        @Override
-//        public void onClick(View v) {
-//            Intent intent = new Intent(activity, RegisterActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
-//    }
-
-    private void checkSaveOption(String username, String password,int status) {
-        if (rememberMe.isChecked()) saveCredentials(username, password,status);
+    private void checkSaveOption(String username, String password, int status) {
+        if (rememberMe.isChecked()) saveCredentials(username, password, status);
         else {
             loginEditor.remove("Username_Key");
             loginEditor.remove("Password_Key");
@@ -108,11 +90,11 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private void saveCredentials(String username, String password,int status) {
+    private void saveCredentials(String username, String password, int status) {
         loginEditor.putString("Username_Key", username);
         loginEditor.putString("Password_Key", password);
         loginEditor.putString("isLoggedIn", "yes");
-        loginEditor.putInt("User_Type",status);
+        loginEditor.putInt("User_Type", status);
         loginEditor.commit();
     }
 
@@ -183,31 +165,29 @@ public class LoginActivity extends Activity {
                         // do nothing
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.warning)
                 .show();
     }
 
-    private void setURL()
-    {
+    private void setURL() {
         final EditText txtUrl = new EditText(this);
         txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String string = preferences.getString("URL", "Empty");
-        if(!string.equals("Empty"))
-        {
+        if (!string.equals("Empty")) {
             String[] part = string.split("/");
             string = part[2].split(":")[0];
         }
 
         new AlertDialog.Builder(this)
                 .setTitle("Web Services Initialization")
-                .setMessage("Please type the desired IP for the normal operation of the Web methods. ("+string+")")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods. (" + string + ")")
                 .setView(txtUrl)
                 .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String url = txtUrl.getText().toString();
-                        if(url.isEmpty()) return;
+                        if (url.isEmpty()) return;
                         loginEditor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
                         loginEditor.commit();
                     }
@@ -256,7 +236,7 @@ public class LoginActivity extends Activity {
             if (login_successful == 1 || login_successful == 2) {
                 dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(), UserActivity.class);
-                checkSaveOption(username, password,login_successful);
+                checkSaveOption(username, password, login_successful);
                 intent.putExtra("Username_Key", username);
                 intent.putExtra("Password_Key", password);
                 intent.putExtra("User_Type", login_successful);

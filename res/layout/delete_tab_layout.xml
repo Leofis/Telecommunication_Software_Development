@@ -8,9 +8,11 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/register_title"
+            android:text="Delete PCs from Database"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="30sp"
+            android:textSize="29sp"
+            android:textStyle="italic"
+            android:textColor="@color/chocolate"
             android:textIsSelectable="true"
             android:layout_gravity="center"
             android:paddingBottom="25dp"/>
@@ -20,31 +22,31 @@
             android:layout_gravity="center_horizontal"/>
 
     <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
         <Button
-                android:layout_width="180dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/answer_yes_button"
                 android:id="@+id/register_button"
                 android:onClick="registerComputer"
-                />
+                android:layout_weight="1"/>
         <Button
-                android:layout_width="180dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/answer_no_button"
                 android:id="@+id/unregister_button"
                 android:onClick="unregisterComputer"
-                />
+                android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
         <EditText
-                android:layout_width="360dp"
-                android:layout_height="54dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/genericID_textfield"
                 android:inputType="text"
                 android:hint="@string/genericID"

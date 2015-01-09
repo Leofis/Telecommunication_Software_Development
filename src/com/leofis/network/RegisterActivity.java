@@ -57,7 +57,7 @@ public class RegisterActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu, this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         menu.getItem(1).setVisible(false);
         return true;
@@ -67,7 +67,6 @@ public class RegisterActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.menu_settings) {
             setURL();
             return true;
@@ -112,7 +111,6 @@ public class RegisterActivity extends Activity {
         if (!isOnline()) {
 
             Toast toast = Toast.makeText(getApplicationContext(), "No Network connection", Toast.LENGTH_LONG);
-            //toast.setGravity(Gravity.NO_GRAVITY,0, 150);
             toast.show();
         } else if (checkCredentials()) {
             usernameText.setText("");
@@ -144,7 +142,6 @@ public class RegisterActivity extends Activity {
         if (username.isEmpty()) {
             if (password.isEmpty() && passwordConf.isEmpty()) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Please complete all the fields in the form.", Toast.LENGTH_LONG);
-                // toast.setGravity(Gravity.NO_GRAVITY,0, 150);
                 usernameText.setHintTextColor(Color.GRAY);
                 passwordText.setHintTextColor(Color.GRAY);
                 passwordConfText.setHintTextColor(Color.GRAY);
@@ -206,16 +203,12 @@ public class RegisterActivity extends Activity {
             if (myComputers.isEmpty()) {
                 addComputerText.setError("Choose at least one Computer");
                 Toast toast = Toast.makeText(getApplicationContext(), "You didn't choose your Computers.", Toast.LENGTH_LONG);
-                // toast.setGravity(Gravity.NO_GRAVITY,0, 150);
                 toast.show();
             } else {
                 addComputerText.setError(null);
                 passwordConfText.setText("");
-                // passwordConfText.setHintTextColor(Color.RED);
-                // passwordConfText.setHint("Not Match with the Password");
                 passwordConfText.setError("Not Match with the Password");
                 Toast toast = Toast.makeText(getApplicationContext(), "Password and Confirm Password don't match ", Toast.LENGTH_LONG);
-                // toast.setGravity(Gravity.NO_GRAVITY,0, 150);
                 toast.show();
             }
             return false;
@@ -229,27 +222,25 @@ public class RegisterActivity extends Activity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void setURL()
-    {
+    private void setURL() {
         final EditText txtUrl = new EditText(this);
         txtUrl.setInputType(InputType.TYPE_CLASS_PHONE);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String string = preferences.getString("URL", "Empty");
-        if(!string.equals("Empty"))
-        {
+        if (!string.equals("Empty")) {
             String[] part = string.split("/");
             string = part[2].split(":")[0];
         }
 
         new AlertDialog.Builder(this)
                 .setTitle("Web Services Initialization")
-                .setMessage("Please type the desired IP for the normal operation of the Web methods. ("+string+")")
+                .setMessage("Please type the desired IP for the normal operation of the Web methods. (" + string + ")")
                 .setView(txtUrl)
                 .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String url = txtUrl.getText().toString();
-                        if(url.isEmpty()) return;
+                        if (url.isEmpty()) return;
                         SharedPreferences loginPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                         SharedPreferences.Editor editor = loginPreferences.edit();
                         editor.putString("URL", "http://" + url + ":9999/LeofisService/LeofisService?WSDL");
@@ -263,13 +254,12 @@ public class RegisterActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle("Registration Failed!")
                 .setMessage("Your username is taken or some of your computers is managed by another member!")
-                /*android.R.string.no*/
                 .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // do nothing
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.warning)
                 .show();
     }
 
@@ -340,13 +330,8 @@ public class RegisterActivity extends Activity {
                                 startActivity(intent);
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setIcon(R.drawable.save)
                         .show();
-
-                // Intent intent = new Intent(getApplicationContext(), UserActivity.class);
-                //  checkSaveOption(username,password);
-                //  intent.putExtra("Username_Key", username);
-                // startActivity(intent);
             } else {
                 dialog.dismiss();
                 errorRegister();

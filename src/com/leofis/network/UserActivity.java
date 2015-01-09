@@ -1,7 +1,10 @@
 package com.leofis.network;
 
-import android.app.*;
+import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,7 +19,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +52,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
     private String username;
     private String password;
-    //private final String ADMIN_USERNAME = "admin"; /* must be replaced with property file */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +73,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         viewPager.setAdapter(tabAdapter);
         viewPager.setOffscreenPageLimit(3);
 
-        //Button register = (Button) findViewById(R.id.register_button);
-        //Button unregister = (Button) findViewById(R.id.unregister_button);
-        //delEditText = (EditText) findViewById(R.id.genericID_textfield);
-
         // Asking for the default ActionBar element that our platform supports.
         actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(false);
@@ -88,11 +85,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Creating ActionBar tabs.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        //Setting custom tab icons.
-        //bmwTab = actionBar.newTab().setIcon(R.drawable.bmw_logo);
-        //toyotaTab = actionBar.newTab().setIcon(R.drawable.toyota_logo);
-        //fordTab = actionBar.newTab().setIcon(R.drawable.ford_logo);
 
         // Setting tab titles.
         statisticalTab = actionBar.newTab().setText("Interfaces");
@@ -111,7 +103,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
         // Adding tabs to the ActionBar.
-
         actionBar.addTab(statisticalTab);
         actionBar.addTab(interfaceTab);
         if (superUser) {
@@ -140,7 +131,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu, this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
@@ -152,7 +143,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.menu_settings) {
             setURL();
             return true;
@@ -204,7 +194,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             AsyncTaskAddPattern taskAddPattern = new AsyncTaskAddPattern(maliciousIP, null);
             taskAddPattern.execute();
         }
-
     }
 
     public void addMaliciousPa(View view) {
@@ -309,6 +298,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 }
             });
         }
+        adapter.close();
     }
 
     public void logout(View view) {
@@ -325,7 +315,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     /*----------------------------------------------*/
 
     protected class AsyncTaskAddPattern extends AsyncTask<String, Integer, Boolean> {
-        ProgressDialog dialog = new ProgressDialog(UserActivity.this);
         private String pattern;
         private String patternTwo;
 
@@ -345,15 +334,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             WebServiceAction webservice = new WebServiceAction(getApplicationContext());
             boolean result = webservice.insertPattern(username, password, pattern, patternTwo);
             return result;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            dialog.setMessage("Completing Registration...");
-            dialog.setIndeterminate(true);
-            dialog.setCancelable(true);
-            dialog.show();
         }
 
         @Override
@@ -385,7 +365,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     protected class AsyncTaskShowAll extends AsyncTask<String, Integer, String> {
-        ProgressDialog dialog = new ProgressDialog(UserActivity.this);
 
         @Override
         protected void onPreExecute() {
@@ -401,20 +380,11 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            dialog.setMessage("Completing Registration...");
-            dialog.setIndeterminate(true);
-            dialog.setCancelable(true);
-            dialog.show();
-        }
-
-        @Override
         protected void onPostExecute(String cryptChainPCs) {
             super.onPostExecute(cryptChainPCs);
             String chainPCs = null;
             if (cryptChainPCs == null) return;
-            Log.i("All malicious", cryptChainPCs);
+            //Log.i("All malicious", cryptChainPCs);
 
             byte[] decodedKey = Base64.decode("95iFzT0xmGc=", Base64.DEFAULT);
             SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES");
@@ -425,7 +395,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.i("All malicious", chainPCs);
+            //Log.i("All malicious", chainPCs);
 
             if (!chainPCs.isEmpty()) {
                 String[] parts = chainPCs.split(" <|> ");

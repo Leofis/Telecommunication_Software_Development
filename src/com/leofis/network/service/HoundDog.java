@@ -14,7 +14,7 @@ import java.util.List;
 
 public class HoundDog implements Runnable {
 
-    private long sleepTime = 20 * 1000; /*property value*/
+    private long sleepTime = 20 * 1000;
     private volatile boolean stillRun;
 
     private String username = null;

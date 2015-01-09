@@ -2,6 +2,7 @@ package com.leofis.network.visual_tools;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,11 +56,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ImageView imageView = (ImageView) convertView.findViewById(R.id.exListItemImage);
 
         txtListChild.setText(childText);
-        if(childText.contains("On"))
-        {
+        if (childText.contains("On")) {
             imageView.setImageResource(R.drawable.online);
-        }else if(childText.contains("Of")) imageView.setImageResource(R.drawable.yellow_offline);
-        else imageView.setImageResource(R.drawable.shut_down);
+            txtListChild.setTextColor(Color.parseColor("#006400"));
+        } else if (childText.contains("Of")) imageView.setImageResource(R.drawable.yellow_offline);
+        else {
+            txtListChild.setTextColor(Color.parseColor("#CD4F39"));
+            imageView.setImageResource(R.drawable.shut_down);
+        }
 
         return convertView;
     }

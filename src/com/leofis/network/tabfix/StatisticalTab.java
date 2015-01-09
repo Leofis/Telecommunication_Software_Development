@@ -14,6 +14,8 @@ public class StatisticalTab extends Fragment {
     public static GridView gridViewOne;
     public static TextView textViewOne;
     public static TextView textViewTwo;
+    public static TextView textViewOneDe;
+    public static TextView textViewTwoDe;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -22,6 +24,8 @@ public class StatisticalTab extends Fragment {
         gridViewTwo = (GridView) view.findViewById(R.id.gridViewTwo);
         textViewOne = (TextView) view.findViewById(R.id.textViewMalicious);
         textViewTwo = (TextView) view.findViewById(R.id.textViewIP);
+        textViewOneDe = (TextView) view.findViewById(R.id.textViewMaliciousDetails);
+        textViewTwoDe = (TextView) view.findViewById(R.id.textViewIPsDetails);
         return view;
     }
 }

@@ -10,40 +10,40 @@ import android.util.Log;
 
 public class DatabaseAdapter {
 
-    public final String KEY_GENERIC_ID = "GenericID";
-    public final String KEY_INTERFACE_NAME = "InterfaceName";
-    public final String KEY_INTERFACE_IP = "InterfaceIP";
-    public final String KEY_MALICIOUS_PATTERN = "MaliciousPattern";
-    public final String KEY_MALICIOUS_IP = "MaliciousIP";
-    public final String COUNT = "Count";
-    public final String STATE = "State";
-    private static final String TAG = "DBAdapter";
+    private final String KEY_GENERIC_ID = "GenericID";
+    private final String KEY_INTERFACE_NAME = "InterfaceName";
+    private final String KEY_INTERFACE_IP = "InterfaceIP";
+    private final String KEY_MALICIOUS_PATTERN = "MaliciousPattern";
+    private final String KEY_MALICIOUS_IP = "MaliciousIP";
+    private final String COUNT = "Count";
+    private final String STATE = "State";
+    private final String TAG = "DBAdapter";
 
-    private static final String DATABASE_NAME = "Nsa_Android";
-    private static final String DATABASE_TABLE_ONE = "MaliciousIPCount";
-    private static final String DATABASE_TABLE_TWO = "MaliciousPatternCount";
-    private static final String DATABASE_TABLE_THREE = "InterfaceState";
-    private static final String DATABASE_TABLE_FOUR = "OfflineWork";
-    private static final int DATABASE_VERSION = 1;
+    private final String DATABASE_NAME = "Nsa_Android";
+    private final String DATABASE_TABLE_ONE = "MaliciousIPCount";
+    private final String DATABASE_TABLE_TWO = "MaliciousPatternCount";
+    private final String DATABASE_TABLE_THREE = "InterfaceState";
+    private final String DATABASE_TABLE_FOUR = "OfflineWork";
+    private final int DATABASE_VERSION = 1;
 
-    private static final String CREATE_TABLE_0NE =
+    private final String CREATE_TABLE_0NE =
             "create table MaliciousIPCount (GenericID text not null, "
                     + "InterfaceName text not null, InterfaceIP text not null, "
                     + "MaliciousIP text not null, Count integer, "
                     + "primary key (GenericID, InterfaceName,InterfaceIP,MaliciousIP));";
 
-    private static final String CREATE_TABLE_TWO =
+    private final String CREATE_TABLE_TWO =
             "create table MaliciousPatternCount (GenericID text not null, "
                     + "InterfaceName text not null, InterfaceIP text not null, "
                     + "MaliciousPattern text not null, Count integer, "
                     + "primary key (GenericID, InterfaceName,InterfaceIP,MaliciousPattern));";
 
-    private static final String CREATE_TABLE_THREE =
+    private final String CREATE_TABLE_THREE =
             "create table InterfaceState (GenericID text not null, "
                     + "InterfaceName text not null, State text, "
                     + "primary key (GenericID, InterfaceName));";
 
-    private static final String CREATE_TABLE_FOUR =
+    private final String CREATE_TABLE_FOUR =
             "create table OfflineWork (_id integer primary key autoincrement, "
                     + "RequestedJob text not null"
                     + ");";
@@ -58,7 +58,7 @@ public class DatabaseAdapter {
         DBHelper = new DatabaseHelper(context);
     }
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    private class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
@@ -87,18 +87,18 @@ public class DatabaseAdapter {
     }
 
     //---opens the database---
-    public synchronized DatabaseAdapter open() throws SQLException {
+    public DatabaseAdapter open() throws SQLException {
         db = DBHelper.getWritableDatabase();
         return this;
     }
 
     //---closes the database---
-    public synchronized void close() {
+    public void close() {
         DBHelper.close();
     }
 
     //---insert the first count to the MaliciousIPCount table---
-    public synchronized long insertIPCount(String genericID, String interfaceName, String interfaceIP, String maliciousIP, Integer count) {
+    public long insertIPCount(String genericID, String interfaceName, String interfaceIP, String maliciousIP, Integer count) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_GENERIC_ID, genericID);
         initialValues.put(KEY_INTERFACE_NAME, interfaceName);
@@ -109,7 +109,7 @@ public class DatabaseAdapter {
     }
 
     //---insert the first count to the MaliciousPatternCount table identical---
-    public synchronized long insertPatternCount(String genericID, String interfaceName, String interfaceIP, String maliciousPattern, Integer count) {
+    public long insertPatternCount(String genericID, String interfaceName, String interfaceIP, String maliciousPattern, Integer count) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_GENERIC_ID, genericID);
         initialValues.put(KEY_INTERFACE_NAME, interfaceName);
@@ -120,7 +120,7 @@ public class DatabaseAdapter {
     }
 
     //---insert the first count to the InterfaceState table---
-    public synchronized long insertInterfaceState(String genericID, String interfaceName, String state) {
+    public long insertInterfaceState(String genericID, String interfaceName, String state) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_GENERIC_ID, genericID);
         initialValues.put(KEY_INTERFACE_NAME, interfaceName);
@@ -136,7 +136,7 @@ public class DatabaseAdapter {
     }
 
     //---deletes a particular rows---
-    public synchronized void deletePC(String genericID) {
+    public void deletePC(String genericID) {
         db.delete(DATABASE_TABLE_ONE, KEY_GENERIC_ID +
                 "=?", new String[]{genericID});
         db.delete(DATABASE_TABLE_TWO, KEY_GENERIC_ID +
@@ -146,13 +146,13 @@ public class DatabaseAdapter {
     }
 
     //---deletes a particular rows OfflineWork---
-    public synchronized void deleteJob(String requestedJob) {
+    public void deleteJob(String requestedJob) {
         db.delete(DATABASE_TABLE_FOUR, "RequestedJob" +
                 "=?", new String[]{requestedJob});
     }
 
     //---deletes the database---
-    public synchronized void deleteDB() {
+    public void deleteDB() {
         db.execSQL("delete from " + DATABASE_TABLE_ONE);
         db.execSQL("delete from " + DATABASE_TABLE_TWO);
         db.execSQL("delete from " + DATABASE_TABLE_THREE);
@@ -160,7 +160,7 @@ public class DatabaseAdapter {
     }
 
     //---retrieves all the IPTable---
-    public synchronized Cursor getAllIPTable() {
+    public Cursor getAllIPTable() {
         return db.query(DATABASE_TABLE_ONE, new String[]{
                         KEY_GENERIC_ID,
                         KEY_INTERFACE_NAME,
@@ -175,7 +175,7 @@ public class DatabaseAdapter {
     }
 
     //---retrieves all the PatternTable---
-    public synchronized Cursor getAllPatternTable() {
+    public Cursor getAllPatternTable() {
         return db.query(DATABASE_TABLE_TWO, new String[]{
                         KEY_GENERIC_ID,
                         KEY_INTERFACE_NAME,
@@ -292,6 +292,4 @@ public class DatabaseAdapter {
                 KEY_GENERIC_ID + "=?" + " AND " + KEY_INTERFACE_NAME + "=?",
                 new String[]{genericID, interfaceName}) > 0;
     }
-
-
 }

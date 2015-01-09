@@ -34,6 +34,8 @@ public class InterfaceTab extends Fragment {
         Button logout = (Button) view.findViewById(R.id.register_button);
         computerListExView = (ExpandableListView) view.findViewById(R.id.expandableListViewComputer);
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        refreshLayout.setColorScheme(R.color.oliveOil,
+                R.color.darkGreen);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -145,8 +147,10 @@ public class InterfaceTab extends Fragment {
 
                 if ((cursor.getCount() == 0) && (cursorTwo.getCount() == 0)) noStatsShow();
                 else {
-                    StatisticalTab.textViewTwo.setText("Hits with Malicious Patterns");
                     StatisticalTab.textViewOne.setText("Hits with Malicious IPs");
+                    StatisticalTab.textViewTwo.setText("Hits with Malicious Patterns");
+                    StatisticalTab.textViewOneDe.setText("Interface IP             Malicious IP       Count");
+                    StatisticalTab.textViewTwoDe.setText("Interface IP             Pattern                Count");
                     UserActivity.viewPager.setCurrentItem(1);
                 }
 
@@ -167,7 +171,7 @@ public class InterfaceTab extends Fragment {
                         // do nothing
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.warning)
                 .show();
     }
 }

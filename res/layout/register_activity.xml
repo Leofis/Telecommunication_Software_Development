@@ -3,14 +3,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
+              android:background="@drawable/wood"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Register Form"
+            android:text="Registration Form"
+            android:textSize="29sp"
+            android:textColor="@color/chocolate"
+            android:textStyle="italic"
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal"/>
     <Space
