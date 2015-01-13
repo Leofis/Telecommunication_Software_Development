@@ -162,9 +162,11 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-        MaliciousTab.addIPEditText.setError(null);
-        MaliciousTab.addPatternEditText.setError(null);
-        DeleteTab.delEditText.setError(null);
+        if (superUser) {
+            MaliciousTab.addIPEditText.setError(null);
+            MaliciousTab.addPatternEditText.setError(null);
+            DeleteTab.delEditText.setError(null);
+        }
     }
 
     @Override
@@ -504,6 +506,7 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 editor.remove("Password_Key");
                 editor.remove("isLoggedIn");
                 editor.remove("User_Type");
+                editor.remove("RegisteredPCs");
                 editor.commit();
                 stopService(new Intent(getBaseContext(), SilentHunter.class));
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

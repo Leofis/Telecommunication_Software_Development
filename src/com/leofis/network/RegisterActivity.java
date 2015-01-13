@@ -23,6 +23,7 @@ import android.widget.*;
 import com.leofis.network.server.WebServiceAction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RegisterActivity extends Activity {
 
@@ -311,6 +312,10 @@ public class RegisterActivity extends Activity {
 
             if (register_successful) {
                 dialog.dismiss();
+                String registeredPCs = Arrays.toString(computers);
+                registeredPCs = registeredPCs.substring(1, registeredPCs.length() - 1).replaceAll(",", "");
+                loginEditor.putString("RegisteredPCs", registeredPCs);
+                loginEditor.commit();
                 new AlertDialog.Builder(RegisterActivity.this)
                         .setTitle("Easy Login Choice :")
                         .setMessage("Do you want to automatically login next time?")

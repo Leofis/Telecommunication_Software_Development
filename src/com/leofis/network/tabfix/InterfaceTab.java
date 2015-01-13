@@ -2,9 +2,12 @@ package com.leofis.network.tabfix;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.Switch;
 import com.leofis.network.R;
 import com.leofis.network.UserActivity;
 import com.leofis.network.database.DatabaseAdapter;
@@ -25,6 +29,7 @@ import java.util.List;
 public class InterfaceTab extends Fragment {
 
     public static ExpandableListView computerListExView;
+    public static Switch switcher;
     private SwipeRefreshLayout refreshLayout;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,9 +38,12 @@ public class InterfaceTab extends Fragment {
 
         Button logout = (Button) view.findViewById(R.id.register_button);
         computerListExView = (ExpandableListView) view.findViewById(R.id.expandableListViewComputer);
+        switcher = (Switch) view.findViewById(R.id.switchPCs);
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         refreshLayout.setColorScheme(R.color.oliveOil,
                 R.color.darkGreen);
+
+        if (checkSuperUser() || checkSuperUserLogin()) switcher.setEnabled(false);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -63,16 +71,22 @@ public class InterfaceTab extends Fragment {
         ExpandableListAdapter exListAdapter;
         final List<String> listComputerTitles = new ArrayList<String>();
         final HashMap<String, List<String>> listComputerInterfaces = new HashMap<String, List<String>>();
-        HashMap<String, List<String>> tempHash = new HashMap<String, List<String>>();
+        //HashMap<String, List<String>> tempHash = new HashMap<String, List<String>>();
 
         DatabaseAdapter adapter = new DatabaseAdapter(getActivity());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String registeredPCs = preferences.getString("RegisteredPCs", "Null");
         adapter.open();
         Cursor cursor = adapter.getAllInterfaceTable();
         cursor.moveToFirst();
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 String nodeID = cursor.getString(cursor.getColumnIndex("GenericID"));
-                if (!listComputerTitles.contains(nodeID)) listComputerTitles.add(nodeID);
+                if (!listComputerTitles.contains(nodeID)) {
+                    if (switcher.isChecked()) {
+                        if (registeredPCs.contains(nodeID)) listComputerTitles.add(nodeID);
+                    } else listComputerTitles.add(nodeID);
+                }
                 cursor.moveToNext();
             }
         }
@@ -173,5 +187,19 @@ public class InterfaceTab extends Fragment {
                 })
                 .setIcon(R.drawable.warning)
                 .show();
+    }
+
+    private boolean checkSuperUser() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (preferences.getInt("User_Type", 0) == 1) return true;
+        else return false;
+    }
+
+    private boolean checkSuperUserLogin() {
+        Intent intent = getActivity().getIntent();
+        int userType = intent.getIntExtra("User_Type", 0);
+        if (!intent.hasExtra("User_Type")) return false;
+        if (userType == 1) return true;
+        else return false;
     }
 }
