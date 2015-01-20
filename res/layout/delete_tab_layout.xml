@@ -18,20 +18,22 @@
             android:paddingBottom="25dp"/>
     <Space
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="15dp"
             android:layout_gravity="center_horizontal"/>
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="0dp"
+            android:paddingLeft="2dp"
+            android:text="ATTENTION : An existing node can be deleted. Be careful!"
+            android:textColor="@color/tomato"/>
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/answer_yes_button"
-                android:id="@+id/register_button"
-                android:onClick="registerComputer"
-                android:layout_weight="1"/>
+
         <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -228,25 +228,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
         taskShowAll.execute();
     }
 
-    public void registerComputer(View view) {
-
-        if (!isOnline()) return;
-        clearKeyboard();
-        String genericID = DeleteTab.delEditText.getText().toString();
-        if (genericID.isEmpty() || genericID.contains(" ")) {
-            DeleteTab.delEditText.setText("");
-            return;
-        }
-        String yourRegister = "The " + genericID + " successfully registered.";
-        Toast toast = Toast.makeText(getApplicationContext(), yourRegister, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.NO_GRAVITY, 0, 90);
-        toast.show();
-        DeleteTab.delEditText.setText("");
-        DeleteTab.delEditText.setError(null);
-        AsyncTaskRegister taskRegister = new AsyncTaskRegister(genericID);
-        taskRegister.execute();
-    }
-
     public void unregisterComputer(View view) {
         clearKeyboard();
         String genericID = DeleteTab.delEditText.getText().toString();
@@ -423,21 +404,6 @@ public class UserActivity extends FragmentActivity implements ActionBar.TabListe
                 toast.setGravity(Gravity.NO_GRAVITY, 0, 60);
                 toast.show();
             }
-        }
-    }
-
-    protected class AsyncTaskRegister extends AsyncTask<String, Void, Void> {
-        private String genericID;
-
-        public AsyncTaskRegister(String genericID) {
-            this.genericID = genericID;
-        }
-
-        @Override
-        protected Void doInBackground(String... params) {
-            WebServiceAction webservice = new WebServiceAction(getApplicationContext());
-            webservice.register(genericID);
-            return null;
         }
     }
 
